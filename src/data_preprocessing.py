@@ -101,16 +101,18 @@ class TextPreprocessor:
         }
 
     def parse_price(self, price_str: str) -> float:
-        """Extracts float from 'KSh 1,234' format."""
-        if pd.isna(price_str) or price_str == "":
-            return np.nan
-        clean_str = str(price_str).replace("KSh", "").replace(",", "").strip()
+        """Handles both KSh and EGP currency formats."""
+        if pd.isna(price_str) or price_str == "": return np.nan
+        
+        # Remove currency symbols and formatting
+        clean_str = str(price_str).replace("KSh", "").replace("EGP", "").replace(",", "").strip()
+        
+        # Handle ranges: "EGP 329.99 - EGP 399.99" -> 329.99
         if " - " in clean_str:
-            clean_str = clean_str.split(" - ")[0]
-        try:
-            return float(clean_str)
-        except ValueError:
-            return np.nan
+            clean_str = clean_str.split(" - ")[0].replace("EGP", "").strip()
+            
+        try: return float(clean_str)
+        except ValueError: return np.nan
 
     def clean_text(self, text: str) -> str:
         """Lowercase, slang mapping, and regex noise removal."""
