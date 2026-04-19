@@ -30,7 +30,7 @@ ecommerce-sentiment-analysis/
 │   ├── 01_data_exploration.ipynb
 │   ├── 02_sentiment_modeling.ipynb
 │   ├── 03_behavioral_modeling.ipynb
-│   └── 04_interpretability.ipynb
+│   └── 06_final_summary.ipynb
 ├── src/
 │   ├── __init__.py
 │   ├── data_preprocessing.py
