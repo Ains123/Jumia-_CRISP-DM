@@ -2,7 +2,7 @@ import re
 import warnings
 import numpy as np
 import pandas as pd
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
@@ -102,17 +102,26 @@ class TextPreprocessor:
 
     def parse_price(self, price_str: str) -> float:
         """Handles both KSh and EGP currency formats."""
-        if pd.isna(price_str) or price_str == "": return np.nan
-        
+        if pd.isna(price_str) or price_str == "":
+            return np.nan
+
         # Remove currency symbols and formatting
-        clean_str = str(price_str).replace("KSh", "").replace("EGP", "").replace(",", "").strip()
-        
+        clean_str = (
+            str(price_str)
+            .replace("KSh", "")
+            .replace("EGP", "")
+            .replace(",", "")
+            .strip()
+        )
+
         # Handle ranges: "EGP 329.99 - EGP 399.99" -> 329.99
         if " - " in clean_str:
             clean_str = clean_str.split(" - ")[0].replace("EGP", "").strip()
-            
-        try: return float(clean_str)
-        except ValueError: return np.nan
+
+        try:
+            return float(clean_str)
+        except ValueError:
+            return np.nan
 
     def clean_text(self, text: str) -> str:
         """Lowercase, slang mapping, and regex noise removal."""
@@ -133,34 +142,57 @@ class TextPreprocessor:
         ]
 
     def build_nlp_frame(
-        self, reviews: pd.DataFrame, products: pd.DataFrame
+        self, reviews: pd.DataFrame, products: Optional[pd.DataFrame] = None
     ) -> pd.DataFrame:
-        """Merges reviews and products on SKU -> Product_ID mapping."""
-        products = products.copy()
-        products["price_numeric"] = products["final_price"].apply(self.parse_price)
+        """
+        Builds NLP-ready dataframe from reviews.
 
-        # FIX: Mapping 'sku' from reviews to 'product_id' from products
-        merged = reviews.merge(
-            products[
-                ["product_id", "product_name", "product_category", "price_numeric"]
-            ],
-            left_on="sku",
-            right_on="product_id",
-            how="left",
-        )
+        NOTE: products parameter is accepted for API compatibility but NOT merged.
+        SKUs in reviews do not match product_id in products.csv (0% overlap).
+        Sentiment analysis is performed on reviews alone.
 
-        merged["sentiment_target"] = merged["rating"].apply(
+        Args:
+            reviews: DataFrame with columns 'rating', 'title', 'review', 'sku'
+            products: Optional DataFrame (ignored for merging, kept for API compatibility)
+
+        Returns:
+            DataFrame with columns: sentiment_target, full_text, tokens, product_name, etc.
+        """
+        df = reviews.copy()
+
+        # Optional: parse prices if products provided (for reference only, not merged)
+        if products is not None:
+            products = products.copy()
+            products["price_numeric"] = products["final_price"].apply(self.parse_price)
+            print(
+                "⚠️ Note: SKU mismatch detected. Running sentiment on reviews only (no product enrichment)."
+            )
+
+        # Create sentiment target from ratings
+        # 4-5 stars = positive (1), 1-2 stars = negative (0), 3 stars = neutral (drop)
+        df["sentiment_target"] = df["rating"].apply(
             lambda x: 1 if x >= 4 else (0 if x <= 2 else np.nan)
         )
 
-        merged["full_text"] = (
-            merged["title"].fillna("") + " " + merged["review"].fillna("")
+        # Combine title and review for text analysis
+        df["full_text"] = (
+            df["title"].fillna("") + " " + df["review"].fillna("")
         ).apply(self.clean_text)
-        merged["tokens"] = merged["full_text"].apply(self.tokenize)
+        df["tokens"] = df["full_text"].apply(self.tokenize)
 
-        return merged[
-            merged["sentiment_target"].notna() & (merged["full_text"] != "")
-        ].copy()
+        # Add placeholder columns for API compatibility (no merge attempted)
+        df["product_name"] = None
+        df["product_category"] = None
+        df["price_numeric"] = None
+
+        # Filter out neutral ratings (3 stars) and empty text
+        result = df[df["sentiment_target"].notna() & (df["full_text"] != "")].copy()
+
+        print(f"✅ Built NLP frame: {len(result)} reviews processed")
+        print(f"   Positive (4-5 stars): {sum(result['sentiment_target'] == 1)}")
+        print(f"   Negative (1-2 stars): {sum(result['sentiment_target'] == 0)}")
+
+        return result
 
 
 class FeatureEngineer:
@@ -200,6 +232,6 @@ if __name__ == "__main__":
     X, y = feat_eng.engineer(cleaner.clean_behavioral(beh))
     print(f"✅ Behavioral Stream: {X.shape}")
 
-    # NLP Pipeline
+    # NLP Pipeline (no product merge attempted)
     nlp_df = text_proc.build_nlp_frame(revs, prods)
     print(f"✅ NLP Stream: {nlp_df.shape}")
