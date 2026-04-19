@@ -65,7 +65,7 @@ pip install -r requirements.txt
 ## Authors
 Lorenah -M: Lead Developer (Full Pipeline)
 
-Ainsley -W : Data Quality & Testing
+Ainsley -G: Data Quality & Testing
 
 Angela -M: Documentation & Presentation
 
