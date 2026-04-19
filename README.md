@@ -17,6 +17,7 @@ Local vendors face two key challenges:
 - **Reviews Data**: Customer reviews with ratings and text
 
 ## Project Structure
+```
 ecommerce-sentiment-analysis/
 ├── data/
 │   ├── raw/
@@ -44,7 +45,7 @@ ecommerce-sentiment-analysis/
 ├── README.md
 ├── .gitignore
 └── presentation.pdf
-
+```
 
 ## Installation
 
