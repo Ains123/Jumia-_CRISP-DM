@@ -51,7 +51,7 @@ ecommerce-sentiment-analysis/
 
 ```bash
 # Clone repository
-git clone <repository-url>
+git clone https://github.com/Ains123/Jumia-_CRISP-DM.git
 cd ecommerce-sentiment-analysis
 
 # Create virtual environment
