@@ -62,7 +62,7 @@ E-commerce platforms face two distinct challenges:
 ## Installation
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/ecommerce-intelligence.git
+git clone https://github.com/Ains123/Jumia-_CRISP-DM
 cd ecommerce-intelligence
 # Create virtual environment
 python -m venv venv
