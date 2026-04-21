@@ -4,7 +4,7 @@
 This project provides two **independent** analytical frameworks for e-commerce optimization in the Kenyan market:
 1. **Purchase Propensity Engine** - Predicts user purchase likelihood from session behavior
 2. **Sentiment Classifier** - Detects negative review sentiment with Sheng/Swahili slang support
-> ⚠️ **Important Note**: These analyses are independent. The behavioral and review datasets cannot be linked due to mismatched identifiers (SKU vs product_id). Each model stands alone.
+> **Important Note**: These analyses are independent. The behavioral and review datasets cannot be linked due to mismatched identifiers (SKU vs product_id). Each model stands alone.
 ## Problem Statement
 E-commerce platforms face two distinct challenges:
 - **Behavioral**: Identifying high-intent users before they leave (99:1 class imbalance)
@@ -56,14 +56,14 @@ E-commerce platforms face two distinct challenges:
 | Metric | Value |
 |--------|-------|
 | Training samples | 92 reviews |
-| Classes | Positive (4-5⭐), Negative (1-2⭐) |
+| Classes | Positive (4-5), Negative (1-2) |
 | Algorithm | Random Forest + TF-IDF |
 | Slang support | Sheng/Swahili mapping |
 ## Installation
 ```bash
 # Clone the repository
 git clone https://github.com/Ains123/Jumia-_CRISP-DM
-cd ecommerce-intelligence
+cd Jumia-_CRISP-DM
 # Create virtual environment
 python -m venv venv
 source venv/bin/activate  # On Windows: venv\Scripts\activate
@@ -151,13 +151,13 @@ ecommerce-intelligence/
 
 ### Data Limitations (Documented)
 
--   ❌ No join key between behavioral and review datasets
+-    No join key between behavioral and review datasets
     
--   ❌ SKU field in reviews does not match product_id in catalog
+-    SKU field in reviews does not match product_id in catalog
     
--   ❌ Cross-analysis (e.g., "do negative reviewers purchase less?") is impossible
+-    Cross-analysis (e.g., "do negative reviewers purchase less?") is impossible
     
--   ✅ Each analysis validated independently
+-    Each analysis validated independently
     
 
 ## Recommendations
