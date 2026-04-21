@@ -4,7 +4,7 @@
 This project provides two **independent** analytical frameworks for e-commerce optimization in the Kenyan market:
 1. **Purchase Propensity Engine** - Predicts user purchase likelihood from session behavior
 2. **Sentiment Classifier** - Detects negative review sentiment with Sheng/Swahili slang support
-> ⚠️ **Important Note**: These analyses are independent. The behavioral and review datasets cannot be linked due to mismatched identifiers (SKU vs product_id). Each model stands alone.
+> **Important Note**: These analyses are independent. The behavioral and review datasets cannot be linked due to mismatched identifiers (SKU vs. product_id). Each model stands alone.
 ## Problem Statement
 E-commerce platforms face two distinct challenges:
 - **Behavioral**: Identifying high-intent users before they leave (99:1 class imbalance)
@@ -38,28 +38,28 @@ E-commerce platforms face two distinct challenges:
 
 ```
 
-## Datasets
+## Datasets.
 | Dataset | Records | Purpose | Key Columns |
 |---------|---------|---------|-------------|
 | `ecommerce_user_behavior_8000.csv` | 8,000 sessions | Purchase prediction | time_on_site, bounce_rate, cart_items, purchase |
 | `Products.csv` | 100 products | Product metadata (unused in merge) | product_id, final_price |
 | `Reviews.csv` | 100 reviews | Sentiment training | rating, review, title |
-## Model Performance
-### Behavioral Model (Purchase Propensity)
+## Model Performance.
+### Behavioral Model (Purchase Propensity).
 | Metric | Value |
 |--------|-------|
 | Class imbalance | 99:1 (non-purchase:purchase) |
 | Algorithm | Balanced Random Forest |
 | Top predictors | bounce_rate, time_on_site, avg_session_time |
 | ROC-AUC | ~0.57 |
-### Sentiment Model (Review Classification)
+### Sentiment Model (Review Classification).
 | Metric | Value |
 |--------|-------|
 | Training samples | 92 reviews |
-| Classes | Positive (4-5⭐), Negative (1-2⭐) |
+| Classes | Positive (4-5), Negative (1-2) |
 | Algorithm | Random Forest + TF-IDF |
 | Slang support | Sheng/Swahili mapping |
-## Installation
+## Installation.
 ```bash
 # Clone the repository
 git clone https://github.com/Ains123/Jumia-_CRISP-DM
@@ -76,13 +76,13 @@ python -c "import nltk; nltk.download('punkt'); nltk.download('stopwords')"
 
 Run notebooks in order:
 ```
-# 1. Exploratory Data Analysis
+# 1. Exploratory Data Analysis.
 jupyter notebook notebooks/01_data_exploration.ipynb
-# 2. Train sentiment model (reviews only)
+# 2. Train sentiment model (reviews only).
 jupyter notebook notebooks/02_sentiment_modeling.ipynb
-# 3. Train behavioral model (session data only)
+# 3. Train behavioral model (session data only).
 jupyter notebook notebooks/03_behavioral_modeling.ipynb
-# 4. View final summary
+# 4. View final summary.
 jupyter notebook notebooks/06_final_summary.ipynb
 ```
 
@@ -90,7 +90,7 @@ jupyter notebook notebooks/06_final_summary.ipynb
 
 ```
 
-# Run all analyses
+# Run all analyses.
 jupyter nbconvert --to notebook --execute notebooks/0*.ipynb
 # Or run specific model training
 python -c "from src.behavioral_modeling import BehavioralModel; \
@@ -101,7 +101,7 @@ python -c "from src.behavioral_modeling import BehavioralModel; \
  model = BehavioralModel(); model.train(X, y)"
 
 
-## Project Structure
+## Project Structure.
 ```
 ecommerce-intelligence/
 ├── data/
@@ -129,9 +129,9 @@ ecommerce-intelligence/
 └── README.md
 ```
 
-## Key Findings
+## Key Findings.
 
-### Behavioral Analysis
+### Behavioral Analysis.
 
 -   Purchase events represent only **2-3%** of sessions
     
@@ -140,56 +140,56 @@ ecommerce-intelligence/
 -   Balanced Random Forest successfully identifies at-risk sessions despite 99:1 imbalance
     
 
-### Sentiment Analysis
+### Sentiment Analysis.
 
--   **85%** of reviews are 4-5 stars (typical e-commerce positivity bias)
+-   **85%** of reviews are 4-5 stars (typical e-commerce positivity bias).
     
--   Slang mapping (`feki` → `fake`, `mbaya` → `bad`) improves detection accuracy
+-   Slang mapping (`feki` → `fake`, `mbaya` → `bad`) improves detection accuracy.
     
--   ~7% of high-rated reviews contain negative sentiment patterns
-    
-
-### Data Limitations (Documented)
-
--   ❌ No join key between behavioral and review datasets
-    
--   ❌ SKU field in reviews does not match product_id in catalog
-    
--   ❌ Cross-analysis (e.g., "do negative reviewers purchase less?") is impossible
-    
--   ✅ Each analysis validated independently
+-   ~7% of high-rated reviews contain negative sentiment patterns.
     
 
-## Recommendations
+### Data Limitations (Documented)..
 
-### For Behavioral Team
-
-1.  Deploy BRF model to flag high-churn sessions in real-time
+-    No join key between behavioral and review datasets.
     
-2.  Focus retention on users with `bounce_rate > 0.8` and `time_on_site < 10`
+-    SKU field in reviews does not match product_id in catalog.
     
-3.  A/B test personalized offers for predicted non-purchasers
+-    Cross-analysis (e.g., "do negative reviewers purchase less?") is impossible.
     
-
-### For Product/Review Team
-
-1.  Manually review identified information asymmetry cases
-    
-2.  Add Sheng/Swahili slang to standard monitoring lexicons
-    
-3.  Monitor negative tokens (`feki`, `mbaya`) in review streams
+- %  Each analysis validated independently.
     
 
-### For Data Engineering
+## Recommendations.
 
-1.  Implement consistent product identifiers across all data sources
+### For Behavioral Team.
+
+1.  Deploy BRF model to flag high-churn sessions in real-time.
     
-2.  Add `user_id` to review records for user-level linking
+2.  Focus retention on users with `bounce_rate > 0.8` and `time_on_site < 10`.
     
-3.  Consider data warehouse with foreign key constraints
+3.  A/B test personalized offers for predicted non-purchasers.
     
 
-## Requirements
+### For Product/Review Team.
+
+1.  Manually review identified information asymmetry cases.
+    
+2.  Add Sheng/Swahili slang to standard monitoring lexicons.
+    
+3.  Monitor negative tokens (`feki`, `mbaya`) in review streams.
+    
+
+### For Data Engineering.
+
+1.  Implement consistent product identifiers across all data sources.
+    
+2.  Add `user_id` to review records for user-level linking.
+    
+3.  Consider data warehouse with foreign key constraints.
+    
+
+## Requirements.
 
     pandas>=2.0.0
     numpy>=1.24.0
@@ -201,7 +201,7 @@ ecommerce-intelligence/
     joblib>=1.3.0
     jupyter>=1.0.0
 
-## Limitations
+## Limitations.
 
 | Limitation | Impact | Mitigation |
 |------------|--------|------------|
@@ -211,11 +211,11 @@ ecommerce-intelligence/
 | Egyptian product catalog | Not applicable to Kenya | Remove cross-market inference |
 
 
-## License
+## License.
 
 MIT
 
-## Contributors
+## Contributors.
 
 -   Lorenah -M, Ainsley -G, Angela -M, Dennis -K.
 
